@@ -1,12 +1,17 @@
 ---
-- name: single user creation
+- name: single user creation with a new group
   hosts: all
   tasks:
+    - name: Creating group
+      ansible.builtin.group:
+        name: atom
+        gid: 2001
     - name: New user will be created
       ansible.builtin.user:
         name: alex
         comment: "alex jon"
         uid: 1040
+        groups: atom
         password: "{{ '***' | password_hash ('sha512') }}"
         update_password: on_create
         state: present
