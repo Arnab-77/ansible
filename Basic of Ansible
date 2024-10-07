@@ -12,6 +12,8 @@ ansible [core 2.14.14]
 ansible-navigator --version
 ansible-navigator 2.2.0
 
+ansible-navigator images
+
 ansible all --list-hosts >> To list down hosts 
 ansible GroupName --list-hosts >> To list down hosts for a group
 ansible-doc -l
