@@ -1,0 +1,12 @@
+---
+- name: single user creation
+  hosts: all
+  tasks:
+    - name: New user will be created
+      ansible.builtin.user:
+        name: alex
+        comment: "alex jon"
+        uid: 1040
+        password: "{{ '***' | password_hash ('sha512') }}"
+        state: present
+
