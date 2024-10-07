@@ -15,5 +15,7 @@ ansible-navigator 2.2.0
 ansible all --list-hosts >> To list down hosts 
 ansible GroupName --list-hosts >> To list down hosts for a group
 ansible-doc -l
+ansible-doc ansible.builtin.user
 ansible-navigator collections
-ansible-navigator doc -l 
+ansible-navigator doc -m stdout -l 
+ansible-navigator doc -m stdout ansible.builtin.user
