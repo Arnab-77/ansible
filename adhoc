@@ -1,1 +1,2 @@
 ansible all -m ping
+ansible all -a 'cat /etc/hosts'
