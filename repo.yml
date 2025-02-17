@@ -1,0 +1,28 @@
+---
+- name: creating the repo files on all managed nodes
+  hosts: all
+  tasks:
+    - name: Register the GPG key
+      ansible.builtin.rpm_key:
+        key: "file:///etc/pki/rpm-gpg/RPM-GPG-ket-centosofficial"
+        state: present
+
+    - name: creating the repo BaseOS
+      ansible.builtin.yum_repository:
+       name: BaseOS
+       description: "RH294 base OS"
+       baseurl: "https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/"
+       gpgcheck: yes
+       gpgkey: "file:////etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial"
+       enabled: yes
+       file: myrepo
+
+    - name: creating the repo AppStream
+      ansible.builtin.yum_repository:
+       name: AppStream
+       description: "RH294 application stream"
+       baseurl: "https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/"
+       gpgcheck: yes
+       gpgkey: "file:////etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial"
+       enabled: yes
+       file: myrepo
