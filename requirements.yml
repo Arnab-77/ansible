@@ -1,0 +1,8 @@
+[ansible@controlnode ansible]$ cat collections/requirements.yml
+---
+collections:
+- name: https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/artifacts/ansible-posix-1.5.4.tar.gz
+- name: https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/artifacts/community-general-7.5.0.tar.gz
+- name: https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/artifacts/fedora-linux_system_roles-1.54.2.tar.gz
+
+ ansible-galaxy collection install -r collections/requirements.yml -p collections/
