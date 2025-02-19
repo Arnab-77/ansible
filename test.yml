@@ -1,0 +1,68 @@
+[ansible@controlnode ansible]$ cat test.yml
+---
+- name: create test web server
+  hosts: prod
+  tasks:
+    - name: Install httpd package
+      ansible.builtin.dnf:
+        name: httpd
+        state: latest
+
+    - name: Create /webdev directory
+      ansible.builtin.file:
+        path: /webdev
+        state: directory
+        owner: root
+        group: apache
+        mode: u=rwx,g=rwxs, o=rx
+        setype: httpd_sys_config_t
+
+    - name: create /webdev/index.html file
+      ansible.builtin.copy:
+        content: TESTING
+        dest: /webdev/index.html
+        mode: 0644
+        setype: httpd_sys_config_t
+
+    - name: create symbolic link
+      ansible.builtin.file:
+        src: /webdev/index.html
+        dest: /var/www/html/index.html
+        state: link
+
+    - name: Install firewalld
+      ansible.builtin.dnf:
+        name: firewalld
+        state: latest
+
+    - name: Enabling and starting httpd
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Enabling and starting firewalld service
+      ansible.builtin.service:
+         name: firewalld
+         state: started
+         enabled: yes
+
+    - name: Allow http service
+      ansible.posix.firewalld:
+         service: http
+         state: enabled
+         permanent: yes
+         immediate: yes
+
+- name: Access http from all node of test group
+  hosts: test
+  tasks:
+    - name: Testing web server access
+      ansible.builtin.uri:
+        url: http://node3.domain11.example.com
+        return_code: yes
+      register: result
+
+    - ansible.builtin.debug:
+        var: result
+
