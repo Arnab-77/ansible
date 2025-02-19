@@ -1,0 +1,3 @@
+ansible-vault create /home/ansible/ansible/secret.yml
+echo wheniamhero > /home/ansible/ansible/vault-pass
+ansible-vault view /home/ansible/ansible/secret.yml --vault-password-file /home/ansible/ansible/vault-pass
