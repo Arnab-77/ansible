@@ -1,0 +1,37 @@
+wget http://content.example.com/downloads/userlist.yml
+
+---
+- name: usermgmt.yml file
+  hosts: prod
+  vars_files:
+    - secret.yml
+    - userlist.yml
+
+  tasks:
+    - name: create new group
+      ansible.builtin.group:
+        name: "{{ item.groupname }}"
+        gid: "{{ item.gid }}"
+        state: present
+      loop: "{{ mygroups }}"
+
+    - name: create user and add them to web-designer group
+      ansible.builtin.user:
+        name: "{{ item.username }}"
+        password: "{{ sec_password | password_hash('sha512') }}"
+        groups: web-designer
+        shell: /bin/bash
+        state: present
+      when: item.type == 'developer'
+      loop: "{{ myusers }}"
+
+    - name: create user and add them to system-analyst group
+      ansible.builtin.user:
+        name: "{{ item.username }}"
+        password: "{{ sec_password | password_hash('sha512') }}"
+        groups: system-analyst
+        shell: /bin/bash
+        state: present
+      when: item.type == 'analyst'
+      loop: "{{ myusers }}"
+
