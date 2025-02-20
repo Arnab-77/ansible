@@ -1,0 +1,25 @@
+[ansible@controlnode ansible]$ cat timesync.yml
+---
+- name: Time sync play
+  hosts: all
+  vars:
+   timesync_ntp_servers:
+     - hostname: 0.in.pool.ntp.org
+       iburst: yes
+   timezone: UTC
+
+   roles:
+     - redhat.rhel_system_roles.timesync
+
+  post_tasks:
+    - name: set timezone
+      ansible.builtin.timezone:
+        name: "{{ timezone }}"
+      notify: restart chronyd service
+
+  handlers:
+    - name: restart chronyd service
+      ansible.builtin.service:
+       name: chronyd
+       state: restarted
+       enabled: yes
