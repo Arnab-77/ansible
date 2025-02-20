@@ -1,0 +1,10 @@
+---
+- name: Play for cron job
+  hosts: all
+  tasks:
+    - name: play for cron job
+      ansible.builtin.cron:
+        name: "run logger"
+        minute: "*/2"
+        job: 'logger "EX294 is going on"'
+        user: akansha
