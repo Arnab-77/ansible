@@ -1,0 +1,12 @@
+---
+- name: set SELinux default mode
+  hosts: all
+  vars:
+    selinux_state: enforcing
+  tasks:
+    - name: Apply SELinux roles
+      block:
+        - include_role:
+            name: redhat.rhel_system_roles.selinux
+        - name: Restart managed hosts
+          ansible.builtin.reboot:
