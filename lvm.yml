@@ -37,3 +37,38 @@
               path: /data
               fstype: xfs
               state: mounted
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+[ansible@controlnode ansible]$ cat lvm1.yml
+---
+- name: create a new partition
+  hosts: all
+  tasks:
+    - name: check the existance of extra disk
+      ansible.builtin.fail:
+        msg: "research volume group not found"
+      when: ansible_lvm.vgs.research is not defined
+
+    - name: managing the LVM
+      block:
+        - name: creating LV of size 1400M
+          community.general.lvol:
+           vg: research
+           lv: data
+           size: 1400M
+      rescue:
+        - name: Display the error
+          ansible.builtin.debug:
+             msg: "Not enough space to create partition"
+        - name: creating LV of size 800M
+          community.general.lvol:
+            vg: research
+            lv: data
+            size: 800M
+      always:
+        - name: create file system
+          community.general.filesystem:
+              fstype: xfs
+              dev: /dev/research/data
+-------------------------------------------------------------------------------------------------------------------------------------
+
