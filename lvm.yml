@@ -1,0 +1,39 @@
+---
+- name: create a new partition
+  hosts: all
+  tasks:
+    - name: check the existance of extra disk
+      ansible.builtin.fail:
+        msg: "Disk is not available"
+      when: ansible_device.vdb is not defined
+    - name: create the new partition
+      block:
+        - name: create partition of 2.4 GiB
+          community.general.parted:
+            device: /dev/vdb
+            state: present
+            part_type: primary
+            part_start: -2400MiB
+            number: 2
+      rescue:
+        - name: Display the error
+          ansible.builtin.debug:
+             msg: "Not enough space to create partition"
+        - name: create partition of 512 GiB
+          community.general.parted:
+            device: /dev/vdb
+            state: present
+            part_type: primary
+            part_start: -512MiB
+            number: 2
+      always:
+         - name: Format the parttion with xfs
+           community.general.filesystem:
+              fstype: xfs
+              dev: /dev/vdb2
+         - name: mount the file system
+           ansible.posix.mount:
+              src: /dev/sdb2
+              path: /data
+              fstype: xfs
+              state: mounted
