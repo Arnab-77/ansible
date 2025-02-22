@@ -1,0 +1,32 @@
+---
+- name: create /root/hwreport.txt file on manage hosts
+  hosts: all
+  tasks:
+   - name: Download hwreport.txt file
+     ansible.builtin.get_url:
+      url: http://content.example.com/downloads/hwreport.txt
+      dest: /root/hwreport.txt
+   - name: change Hostname
+     ansible.builtin.lineinfile:
+      path: /root/hwreport.txt
+      line: "HOST= {{ ansible_hostname }}"
+      regexp: ^HOST
+      state: present
+   - name: change Memory
+     ansible.builtin.lineinfile:
+      path: /root/hwreport.txt
+      line: "MEMORY= {{ ansible_memtotal_mb }}"
+      regexp: ^MEMORY
+      state: present
+   - name: change bios
+     ansible.builtin.lineinfile:
+      path: /root/hwreport.txt
+      line: "BIOS= {{ ansible_bios_version }}"
+      regexp: ^BIOS
+      state: present
+   - name: change vda
+     ansible.builtin.lineinfile:
+      path: /root/hwreport.txt
+      line: "VDA_DISK_SIZE= {% if ansible_devices.vda is defined %} {{ ansible_devices.vda.size )) {% else %} NONE {% endif %}"
+      regexp: ^VDA_DISK_SIZE
+      state: present
