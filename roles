@@ -1,0 +1,56 @@
+---
+# tasks file for apache
+- name: Install httpd package
+  ansible.builtin.dnf:
+   name:
+     - httpd
+     - mod_ssl
+   state: latest
+
+- name: Install firewalld package
+  ansible.builtin.dnf:
+    name: firewalld
+    state: latest
+
+
+- name: create the default document
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+
+- name: Enable and start httpd service
+  ansible.builtin.service:
+    name: httpd
+    state: started
+    enabled: yes
+
+- name: Enable and start firewalld service
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: allow http through firewall
+  ansible.posix.firewalld:
+    service: http
+    state: enabled
+    permanent: yes
+    immediate: yes
+
+- name: allow https through firewall
+  ansible.posix.firewalld:
+    service: https
+    state: enabled
+    permanent: yes
+    immediate: yes
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+[ansible@controlnode templates]$ cat index.html.j2
+ welcome to {{ ansible_hostname }} in {{ ansible_default_ipv4.address }}
+
+---
+- name: configure Apache web server using apache role
+  hosts: webserver
+
+  roles:
+    - apache
